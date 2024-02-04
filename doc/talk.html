@@ -359,35 +359,27 @@ display: none;
 
 <div id="今日のテーマ" class="section level1">
 <h1>今日のテーマ</h1>
-<p>データ分析には当然データが必要なので、
-そのデータを準備する必要があります。</p>
+<p>データ分析をするには、当然データが必要になります。</p>
+<p>ですから、必ずそのデータを準備する作業が必要になります。</p>
 <p>そこで、今日のテーマは「データを準備する」部分に着目します。</p>
-<p>データ分析をするためには、
-その分析するためのデータが必要となりますが、</p>
-<p>じゃ、「コレを分析してください」という形で用意されているわけではありません。</p>
+<p>その分析対象となるデータですが、</p>
+<p>じゃ、「コレを分析してください」という形で、
+はじめから用意されているわけではありません。</p>
 <p>まず、</p>
 <ul>
 <li>何処にあるのかを探す</li>
-<li>それを手に入れて</li>
+<li>それを手に入れる</li>
 <li>分析できる形にする</li>
 </ul>
-<p>という「準備」作業が必ず必要になります。</p>
-<p>実は意外と扱うデータは大量にあります。 「これを分析してね」という
-「これ」にするための 作業が大量にあります。</p>
-<p>つまり準備作業は、 手作業でやるのが嫌になるくらい、</p>
-<p>若しくは、ある一定の量を超えると、手作業では実質的には無理なくらい、</p>
-<p><strong>大量の作業</strong>をする必要が生じます。</p>
-<p>なので、この作業の効率化はデータ分析一般の作業の中で
-必須の項目になります。</p>
+<p>という「準備作業」が必ず必要になります。</p>
+<p>さて、「作業」というのは、どレくらいのイメージでしょうか？</p>
+<p>実は意外と準備のために扱うデータは大量にあります。</p>
+<p>どれくらい大量かといえば、通常は、手作業でやるのが嫌になるくらいです。
+そして、ある一定の量を超えると、
+手作業では根性があっても実質的には無理なくらいの作業になります。</p>
 <p>そこで、今日のテーマは、</p>
 <p><strong>大量のデータを効率的に処理</strong>する方法に着目し、</p>
 <p>その方法を具体的に紹介することにしました。</p>
-<p>データ委員会で、長尾先生に「こういうなの集められん？」というので
-集めて整理したことがあるのが、、</p>
-<ul>
-<li>建築着工</li>
-<li>不動産取引価格情報データ</li>
-</ul>
 <p>で、今回は</p>
 <ul>
 <li>人口データ</li>
@@ -399,9 +391,10 @@ display: none;
 人口の推移の分析を思い浮かべてください。</p>
 <p>人口データは、 不動産の受給動向の要因として分析される
 馴染み深いデータの一つです。</p>
+<p>人口データはどんなものを想像するでしょうか？</p>
 <div id="人口データ" class="section level2">
 <h2>人口データ</h2>
-<p>「人口データ」とはどんなものか 少しみてみます。</p>
+<p>「人口データ」とはどんなものか具体的に見てみます。</p>
 <ul>
 <li>総人口</li>
 <li>男女</li>
@@ -414,59 +407,129 @@ display: none;
 大阪府下の各市町村について計測、若しくは、推計されその数値がまとめられています。</p>
 <p>大阪府下の各市町村については大阪府のWebページで公開されています。</p>
 <p><a href="https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html" class="uri">https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html</a></p>
+<p>このページを開いて、具体的なデータを少しだけ覗いてみましょう。</p>
 </div>
 <div id="意外と大量のデータ" class="section level2">
 <h2>意外と大量のデータ</h2>
 <p>大阪府のページを見ながら、ダウンロード。</p>
+<p>まず、全部のデータをダウンロードするのが煩雑です</p>
+<p>＜実際に開く＞</p>
+<p>新しいデータ（月次）</p>
+<p>古いデータ（年毎で、シートが月次）</p>
+<p>年齢別ファイル（縦に総合、男、女）となっている</p>
+<p>等、ファイルによって違いがあることを確認</p>
 <p>実際のファイルの中身を少し見てみると、
 年によって形式が違うことがわかります。</p>
 <p>人口のデータを分析するためには、データがどんなかたちであるとよいのか？</p>
 <p>例えば、大阪府全体の人口の推移を見たい場合、、、</p>
+<p>大阪府全体の人口を月毎に横か縦に並べたい</p>
 <p>ファイルは月毎（シート毎）なので、
-各ファイルから大阪府のデータを取り出し、
-順番に並べる必要がある。５年ならば６０行。
-地域全てをやろうと思うと、この作業を８６回繰り返す。</p>
-<p>その前に、必要なエクセルファイルを全てダウンロードする必要もあります。</p>
+各ファイルから大阪府全体のデータを取り出し、
+順番に並べる必要がある。５年ならば６０行（列）。
+地域全てをやろうと思うと、この作業を地域分である８６回繰り返す。</p>
+<p>セル毎のコピーを１秒間に１回やったとしても、
+多分１時間半以上、この単純作業を繰り返すことになります。</p>
 <p>これがデータ分析にあたって、必ずしなければならないデータの準備であり、
 先に言ったとおり、これらの作業は、
 手作業でやるのが嫌になる（若しくは、不可能）なくらい、
 <strong>大量のデータ</strong>を処理する必要が生じます。</p>
-<p>現在は、協力者が手作業でまとめて分科会担当者へ配布</p>
-</div>
-<div id="データ準備を効率化" class="section level2">
-<h2>データ準備を効率化</h2>
-<p>まとめてみると</p>
-<ul>
-<li>ファイルのダウンロード</li>
-<li>既存データの内容を確認</li>
-<li>データを編集して再作成</li>
-</ul>
-<p>これらのうち出来る部分を自動化（機械化）して、
-データの準備を効率化します。</p>
+<p>この作業は、１回だけならば、頑張って準備すればよいのですが、
+準備すべきデータの形というのは、分析したいものによって変わります。</p>
+<p>つまり、同じようなデータソースであったとしても、
+やってみたい分析によって準備すべきデータの形が変わります。
+この時に、データの形を変えるのに時間がかかるとすると、
+データの分析自体が時間がかかってしまい。
+面倒な分析になってしまうことになります。</p>
+<p>一方で、短期間でデータの準備が出来れば、
+いろんな分析をすぐに出来るようになり、結果として、
+そのデータから得られるものが多くなるのです。</p>
+<p>なので、データの準備の効率化はデータ分析の効率化に繋がります。</p>
 </div>
 </div>
 <div id="プログラムによる自動化" class="section level1">
 <h1>プログラムによる自動化</h1>
+<p>「データの準備とは」をまとめれば</p>
+<ul>
+<li>データの入手</li>
+<li>入手したデータの内容確認</li>
+<li>データ分析しやすい形へデータを編集</li>
+</ul>
+<p>全ての場面でプログラミングが役に立ちます</p>
+<p>今日もデータ分析を得意とするR言語での例</p>
+<p>簡単に一つづつ見ていきます</p>
+<div id="データの入手" class="section level2">
+<h2>データの入手</h2>
+<p>手作業では、クリックしていますが、</p>
+<p>プログラムではまず、</p>
+<p>ページの情報を取得して</p>
+<p>それをもとにファイルをダウンロードする</p>
+<p>という、方法が一般的。</p>
 </div>
-<div id="スクレイピング" class="section level1">
-<h1>スクレイピング</h1>
+<div id="入手したデータ内容の確認" class="section level2">
+<h2>入手したデータ内容の確認</h2>
+<p>先に確認したとおり、ファイルの形式はいろいろです。</p>
+<p>それらを目視で確認するだけでなくプログラム的に確認できます。</p>
+<p>例えば、地域の割り振りが全て同じなのか？等</p>
+<p>その前提としてまず、エクセルファイルをRのプログラム内に読み込む必要がありますが、
+Rではコレを簡単に行うことが出来るパッケージがあります。</p>
+<ul>
+<li>データファイルをRのデータとして読み込む</li>
+<li>データの構造を把握</li>
+<li>どのように編集するかを決める</li>
+</ul>
+</div>
+<div id="データ分析しやすい形へデータを編集" class="section level2">
+<h2>データ分析しやすい形へデータを編集</h2>
+<ul>
+<li>データをRのプログラムで編集</li>
+<li>データをエクセル等のファイルとして出力</li>
+</ul>
+<p>Rプログラム内で編集し、
+最終的にRユーザーでない人でも使うことが出来るエクセルファイルとして出力します。</p>
+<p>Rのデータをエクセルのファイルとして出力させることもRでは簡単に出来ます。</p>
+</div>
+<div id="具体的な成果" class="section level2">
+<h2>具体的な成果</h2>
+<p><a href="https://github.com/rea-osaka/seminar20240207" class="uri">https://github.com/rea-osaka/seminar20240207</a></p>
+<p>今日のセミナーで話している、
+「データの準備」に関する一つの成果として、
+大阪府で配布されている人口データを 自動収集して、
+分析しやすい一つの形として取りまとめたものを出力するためのプログラム例を
+作成しました。</p>
+<p>＜実際にアクセスしてディレクトリを説明＞</p>
+<p>しかし、今日はこれのこまかな話をするのではなく、
+データ準備の中でよく利用されるプログラムの技術についての話をします。</p>
+<p>プログラムってこんなことができるんだ！という興味を
+もっともらえたら良いなと思っています。</p>
+</div>
+</div>
+<div id="データを入手する技術" class="section level1">
+<h1>データを入手する技術</h1>
+<p>まずは、データを入手する時点の技術に関して話です。</p>
 <p>大まかに２つの方法があります。</p>
 <ul>
 <li>API(Application Programming Interface)</li>
 <li>ページの構造を読み解くスクレイピング</li>
 </ul>
-<p>情報を配布する側も機械化に対応した APIという方法は、
+<p>ひとつは、データを直接やりとりするためのサービスというものがあります。
+情報を配布する側も機械化に対応した APIという方法は、
 ダイレクトにデータを得ることが出来ることが多いです。</p>
+<p>不動産取引価格情報のAPI</p>
+<p>もうひとつは、普通の人が見るような形式のWebから、必要な情報を取得する
+htmlページの構造を読み解くスクレイピングという方法を使う。</p>
+<p>きょうは、スクレイピングの方</p>
+<div id="スクレイピングとは" class="section level2">
+<h2>スクレイピングとは</h2>
 <p>スクレイピングとは、一般に、Webページ上の情報を機械的に取得することを言います。</p>
-<p>例えば、大阪府の人口データのページで、人口データのエクセルファイルへのリンクが沢山ありますが、このリンクが指しているURL自体を、プログラムで読み取ることが出来ます。</p>
-<p>メジャーな高級プログラム言語、例えば、PythonやRuby、Go、そして、R言語にも、
-スクレイピングを行うための関数が用意されていますので、これを利用することで比較的簡単にスクレイピングが行えます。</p>
-<div id="有名なスクレイピングパッケージ" class="section level2">
-<h2>有名なスクレイピングパッケージ</h2>
+<p>有名なスクレイピングパッケージ</p>
 <ul>
 <li><a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/" class="uri">https://www.crummy.com/software/BeautifulSoup/bs4/doc/</a></li>
 <li><a href="https://rvest.tidyverse.org/" class="uri">https://rvest.tidyverse.org/</a></li>
 </ul>
+<p>スクレイピングはあちこちで色んな形で紹介されていて情報は多い方</p>
+<p>例えば、大阪府の人口データのページで、人口データのエクセルファイルへのリンクが沢山ありますが、このリンクが指しているURL自体を、プログラムで読み取ることが出来ます。</p>
+<p>メジャーな高級プログラム言語、例えば、PythonやRuby、Go、そして、R言語にも、
+スクレイピングを行うための関数が用意されていますので、これを利用することで比較的簡単にスクレイピングが行えます。</p>
 </div>
 <div id="スクレイピングの仕組み" class="section level2">
 <h2>スクレイピングの仕組み</h2>
@@ -510,72 +573,119 @@ href_data &lt;-
 <li>html_nodes()関数</li>
 <li>html_attr()関数</li>
 </ul>
+<p>実際にどんなものが得られるのか見てみましょう</p>
+<p>samplecode001</p>
 </div>
-<div id="文字列で選別" class="section level2">
-<h2>文字列で選別</h2>
+<div id="ある規則の文字列を表現する正規表現" class="section level2">
+<h2>ある規則の文字列を表現する正規表現</h2>
 <p>ページ内のリンク先を全て集めると、
 欲しいURL以外のURLも一緒に集まります。 この時、欲しいデータの共通項は
 最後が「xlsx」となっているリンク先なので、
 これだけを抜き出す必要があります。</p>
 <p>プログラムでは一般的に、 ある規則になっている文字の並び方だけを
-取り出したい時に
-<strong>「正規表現」</strong>という表現を使って、取り出すことが出来ます。</p>
-<p>R言語の場合、<a href="https://stringr.tidyverse.org/">stringr</a>パッケージに使いやすい文字列処理の関数があります。</p>
-<pre class="r"><code>#必要なリンクのみを取り出す
+取り出したい時に 例えば、</p>
+<ul>
+<li>“https”で始まっている</li>
+<li>“.xlsx”で終わっている</li>
+<li>“携帯電話の番号みたいな文字列”</li>
+</ul>
+<p>これら<strong>正規表現</strong>を利用して、文字列の選別を行えます。</p>
+<p>実際の表記は以下のようなもの</p>
+<ul>
+<li>“^https”</li>
+<li>“\.xlsx$”</li>
+<li>“0[89]0-[0-9]{4}-[0-9]{4}”</li>
+</ul>
+</div>
+<div id="正規表現を使った文字列比較" class="section level2">
+<h2>正規表現を使った文字列比較</h2>
+<p>R言語の場合、<a href="https://stringr.tidyverse.org/">stringr</a>パッケージに使いやすい
+文字列処理の関数があります。</p>
+<ul>
+<li>str_subset()関数</li>
+</ul>
+<pre class="r"><code>library(stringr)
+
+#必要なリンクのみを取り出す
 link_data &lt;- 
     href_data %&gt;%
     stringr::str_subset(&quot;.xlsx$&quot;) %&gt;% 
     stringr::str_subset(&quot;5sai&quot;, negate = TRUE)</code></pre>
-<ul>
-<li>str_subset()関数</li>
-</ul>
+<p>実際にどのように選別されるか確認します</p>
+<p>samplecode001</p>
 </div>
 <div id="スクレイピングで得られるもの" class="section level2">
 <h2>スクレイピングで得られるもの</h2>
-<p>Webページはいわゆる「文字列」で情報が表現されています。そして、ここで得られるものは、欲しいデータの在処を示したURLの文字列です。</p>
+<p>Webページはいわゆる「文字列」で情報が表現されています。
+そして、ここで得られるものは、欲しいデータの在処を示したURLの文字列です。</p>
 <p>先のR言語の例示のコードでは、
 最終的に、URL文字列（そのベースの一部）のベクトル（配列）が得られます。</p>
 </div>
-</div>
-<div id="データをダウンロードする" class="section level1">
-<h1>データをダウンロードする</h1>
-<p>Web上のファイルをダウンロードする関数もプログラム言語には基本的に用意されています。
-R言語の場合は、基本的なパッケージ(utils)の中にあるdownload.file()関数で、ファイルのダウンロードが出来ます。</p>
-<pre class="r"><code># link_dataベクトルの１つめのURLをダウンロード
-download.file(url = link_data[1], destfile = &quot;datafile.xlsx&quot;)</code></pre>
+<div id="データをダウンロードする" class="section level2">
+<h2>データをダウンロードする</h2>
+<p>インターネット上のファイルをダウンロードする関数も
+プログラム言語には基本的に用意されています。
+R言語の場合は、基本的なパッケージ(utils)の中にあるdownload.file()関数で、
+ファイルのダウンロードが出来ます。</p>
+<p>つまり、プログラムでファイルをダウンロードできます</p>
+<ul>
+<li>download.file()関数</li>
+</ul>
+<pre class="r"><code># ダウンロードしたいファイルのURL
+target_dl_url &lt;- &quot;https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.xlsx&quot;
+
+# ファイルをダウンロードする
+download.file(url = target_dl_url, destfile = basename(target_dl_url))</code></pre>
+<p>basename()関数をつかって、ファイル名を作成</p>
 <p>この関数を使う場合、必ず、保存するファイル名を明示しなければなりません。</p>
+</div>
 <div id="複数ファイルをダウンロードする" class="section level2">
 <h2>複数ファイルをダウンロードする</h2>
-<p>複数ファイルを一部エラーがあっても中断せずにダウンロードする典型の雛形のコードを紹介します。</p>
-<pre class="r"><code>download_by_urls &lt;- function(urls, dest_dir = &quot;.&quot;){
+<p>当然、プログラムでダウンロードする利点は、
+自動的に複数のダウンロードを行うことです。</p>
+<p>複数ファイルの自動ダウンロード</p>
+<pre class="r"><code># ダウンロード先のURLの集合
+urls &lt;- link_data
 
-  for (i in seq_along(urls) ){
-    dest_path = paste0(dest_dir, &quot;/&quot;, basename(urls[i]))
-    
-    Sys.sleep(0.3)
-
-    tryCatch({
-      download.file(url = urls[i], destfile = dest_path)
-    },
-    error = function(e){
-      message(&quot;Error!!&quot;)
-      message(e)
-    })
-  }
+for (i in seq_along(urls) ){
+  
+  #URL文字列から最後の部分をファイル名として取り出す
+  dest_path = basename(urls[i])
+  
+  # ファイルをダウンロードする
+  download.file(url = urls[i], destfile = dest_path)
 }</code></pre>
-<p>実際にこのサンプルコードを走らせる場合には、保存先のディレクトリを作っておくようにしましょう。</p>
+<p>実際には、完全なURLが必要なのでlink_dataを加工する必要があります。</p>
 </div>
 </div>
-<div id="xlsxファイルをrに読み込む" class="section level1">
-<h1>xlsxファイルをRに読み込む</h1>
+<div id="エクセルファイルの読み込み" class="section level1">
+<h1>エクセルファイルの読み込み</h1>
+<p>プログラムで処理するには、まず、読み込みが必要</p>
+<p>Rプログラム内では、data.frameというデータ構造で扱う</p>
+<p>R言語では、<a href="https://ycphs.github.io/openxlsx/index.html">openxlsx</a>パッケージが有名です。</p>
 <p>人口データに関しては、 複数のデータファイルがあります。
 これらのデータを統合するためには、データを加工して結合する必要があり、それらを行うためには、まず、<strong>データを読み込む</strong>必要があります。</p>
-<p>ここで、扱うファイルはマイクロソフトのエクセルファイルのうち、xlsx拡張子が付くものです。
-最近では、このエクセルファイルを様々なプログラム言語のデータとして読み込むことが出来るパッケージが開発されています。</p>
-<p>R言語では、<a href="https://ycphs.github.io/openxlsx/index.html">openxlsx</a>が有名です。</p>
-<p>基本はエクセルファイルがある場所のパスを渡すだけで、Rのdata.frameデータとして読み込まれます。</p>
-<pre class="r"><code># エクセルファイルを読み込む
-df_data &lt;- openxlsx::read.xlsx(&quot;data/data.xlsx&quot;)</code></pre>
+<pre class="r"><code>library(openxlsx)
+
+# エクセルファイルを読み込む
+df_data &lt;- read.xlsx(&quot;data/data.xlsx&quot;)</code></pre>
+<p>samplecode001.Rmd</p>
+<div id="細かな指示も行える" class="section level2">
+<h2>細かな指示も行える</h2>
+<ul>
+<li>シートの扱い</li>
+<li>列目の扱い</li>
+<li>読み込むセル範囲の指定</li>
+</ul>
+<p>国勢調査年のファイルを読み込む際のサンプルです</p>
+<p>censusdata_dlcode.nb.htmlにあります</p>
+<pre class="r"><code># シートの指定やセルの指定をしたもの
+df_data &lt;- 
+  openxlsx::read.xlsx(
+    file, colNames = FALSE,
+    sheet = &quot;表9-1&quot;,
+    rows = c(6:56,63:103))</code></pre>
+</div>
 <div id="ファイル読み込みのサンプルコード" class="section level2">
 <h2>ファイル読み込みのサンプルコード</h2>
 <p>read.xlsx()関数に渡す引数で、エクセルファイルからどのシートを読み込むかや、行や列名をどうするか、セルのどの位置を読み込むか等を細かく指定できるので、実際に読み込むエクセルファイルのデータの配置に合わせて、プログラムで調節することが出来ます。</p>
@@ -590,52 +700,107 @@ df_data &lt;-
 </div>
 <div id="データの整理" class="section level1">
 <h1>データの整理</h1>
-<p>省略</p>
+<p>data.frame構造のデータを操作する関数</p>
+<table>
+<thead>
+<tr class="header">
+<th>関数</th>
+<th>機能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>filter()</td>
+<td>行を選別</td>
+</tr>
+<tr class="even">
+<td>arrange()</td>
+<td>行を並び替え</td>
+</tr>
+<tr class="odd">
+<td>select()</td>
+<td>列を選別</td>
+</tr>
+<tr class="even">
+<td>mutate</td>
+<td>新しい列を作成</td>
+</tr>
+</tbody>
+</table>
+<p>R言語では、<a href="https://dplyr.tidyverse.org/">dplyr</a>パッケージに属しています。</p>
+<p>通常は「<a href="https://www.tidyverse.org/">tidyverse</a>」を呼び出す。</p>
+<p>census_….htmlを見ながら実際のコード</p>
+<p>エクセルのファイル</p>
+<p>ファイル読み込みサブルーチン</p>
+<div id="複数のデータを貼り付け" class="section level2">
+<h2>複数のデータを貼り付け</h2>
+<p>複数のdata.frameデータを統合する関数</p>
+<table>
+<thead>
+<tr class="header">
+<th>関数</th>
+<th>機能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>rbind()</td>
+<td>表の下に追加するイメージ</td>
+</tr>
+<tr class="even">
+<td>left_join()</td>
+<td>表の右に追加するイメージ</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="データをエクセルファイルとして書き出す" class="section level1">
-<h1>データをエクセルファイルとして書き出す</h1>
-<p>読み込みと同じで<a href="https://ycphs.github.io/openxlsx/index.html">openxlsx</a>パッケージにある
-関数を利用します。</p>
-<p>書き出しの関数には、data.frameを直接エクセルファイルとして書き出す方法と、
-プログラム内部で、エクセルのデータを作成し、これをエクセルファイルとして書き出す方法があることを把握しておきましょう。</p>
-<p>以下では、エクセルデータを作って、それをエクセルファイルとして出力する方法を紹介します。</p>
-<div id="プログラムの中のエクセルデータ" class="section level2">
-<h2>プログラムの中のエクセルデータ</h2>
-<p>エクセルファイルの構造をもった
-エクセルデータをRのプログラムの中に作ってしまう。</p>
+<div id="公開された技術書" class="section level2">
+<h2>公開された技術書</h2>
+<p>インターネットで公開された書籍</p>
+<p><a href="https://r4ds.hadley.nz/">R for Data Science (2e)</a></p>
+<p>第３章の「Data transformation」が秀逸</p>
+<p>英語が苦手ならChatGPTでサポートしてもらう</p>
+</div>
+</div>
+<div id="エクセルファイルとして出力" class="section level1">
+<h1>エクセルファイルとして出力</h1>
+<p>データの書き出しも<a href="https://ycphs.github.io/openxlsx/index.html">openxlsx</a>パッケージの関数を利用</p>
+<ul>
+<li>write.xlsx()関数</li>
+</ul>
+<pre class="r"><code>library(openxlsx)
+
+# 内蔵データirisをエクセルファイルへ書き出し
+write.xlsx(iris,&quot;hoge.xlsx&quot;)</code></pre>
+<p>これは、Rのdata.frameデータを扱う場合</p>
+<div id="エクセルのデータ構造を扱う" class="section level2">
+<h2>エクセルのデータ構造を扱う</h2>
+<p>プログラム内部で、エクセルのデータを作成し、
+これをエクセルファイルとして書き出す方法があることを把握しておきましょう。</p>
+<p><strong>data.frameとエクセルの構造は違う</strong></p>
+<p>エクセルファイルの構造</p>
+<ul>
+<li>シートがある</li>
+<li>セルがある</li>
+<li>見た目の属性</li>
+</ul>
+<p>これをRのプログラムの中に作ることが出来る</p>
 <pre class="r"><code># エクセルデータを作る
-obj &lt;- createWorkbook()
+obj &lt;- openxlsx::createWorkbook()
 
 # 枚方市という名前のシートを追加
-addWorksheet(obj, sheetName = &quot;枚方市&quot;)
+openxlsx::addWorksheet(obj, sheetName = &quot;枚方市&quot;)
 
 # 枚方市という名前のシートに人口データを追加
-writeData(obj,
-          sheet = &quot;枚方市&quot;,
-          x = census_data)</code></pre>
+# census_dataがRのdata.frameデータ
+openxlsx::writeData(obj, sheet = &quot;枚方市&quot;, x = census_data)</code></pre>
 </div>
-<div id="現実のエクセルファイルとして書き出し" class="section level2">
-<h2>現実のエクセルファイルとして書き出し</h2>
+<div id="エクセルデータをファイルに出力" class="section level2">
+<h2>エクセルデータをファイルに出力</h2>
 <p>プログラムの中で作ったエクセルデータを
 現実のエクセルファイルとして書き出します。</p>
 <pre class="r"><code># エクセルファイルとして書き出す
-saveWorkbook(obj,
-             file = &quot;hirakata.xlsx&quot;,
-             overwrite = TRUE)</code></pre>
-</div>
-<div id="dinner" class="section level2">
-<h2>Dinner</h2>
-<ul>
-<li>Eat spaghetti</li>
-<li>Drink wine</li>
-</ul>
-</div>
-<div id="going-to-sleep" class="section level2">
-<h2>Going to sleep</h2>
-<ul>
-<li>Get in bed</li>
-<li>Count sheep</li>
-</ul>
+openxlsx::saveWorkbook(obj, file = &quot;hirakata.xlsx&quot;, overwrite = TRUE)</code></pre>
 </div>
 </div>
 

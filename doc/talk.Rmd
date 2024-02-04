@@ -334,9 +334,8 @@ samplecode001
 
 
 
+## ある規則の文字列を表現する正規表現
 
-
-## 文字列で選別
 
 ページ内のリンク先を全て集めると、
 欲しいURL以外のURLも一緒に集まります。
@@ -347,84 +346,156 @@ samplecode001
 プログラムでは一般的に、
 ある規則になっている文字の並び方だけを
 取り出したい時に
-**「正規表現」**という表現を使って、取り出すことが出来ます。
+例えば、
 
-R言語の場合、[stringr](https://stringr.tidyverse.org/)パッケージに使いやすい文字列処理の関数があります。
 
+- "https"で始まっている
+- ".xlsx"で終わっている
+- "携帯電話の番号みたいな文字列"
+
+これら**正規表現**を利用して、文字列の選別を行えます。
+
+実際の表記は以下のようなもの
+
+
+- "^https"
+- "\\.xlsx$"
+- "0[89]0-[0-9]{4}-[0-9]{4}"
+
+
+## 正規表現を使った文字列比較
+
+R言語の場合、[stringr](https://stringr.tidyverse.org/)パッケージに使いやすい
+文字列処理の関数があります。
+
+- str_subset()関数
 
 ```{r eval=FALSE, message=FALSE}
+library(stringr)
+
 #必要なリンクのみを取り出す
 link_data <- 
     href_data %>%
     stringr::str_subset(".xlsx$") %>% 
     stringr::str_subset("5sai", negate = TRUE)
-
 ```
 
-- str_subset()関数
+実際にどのように選別されるか確認します
+
+samplecode001
+
 
 ## スクレイピングで得られるもの
 
-Webページはいわゆる「文字列」で情報が表現されています。そして、ここで得られるものは、欲しいデータの在処を示したURLの文字列です。
+Webページはいわゆる「文字列」で情報が表現されています。
+そして、ここで得られるものは、欲しいデータの在処を示したURLの文字列です。
 
 先のR言語の例示のコードでは、
 最終的に、URL文字列（そのベースの一部）のベクトル（配列）が得られます。
 
-# データをダウンロードする
 
-Web上のファイルをダウンロードする関数もプログラム言語には基本的に用意されています。
-R言語の場合は、基本的なパッケージ(utils)の中にあるdownload.file()関数で、ファイルのダウンロードが出来ます。
+
+## データをダウンロードする
+
+インターネット上のファイルをダウンロードする関数も
+プログラム言語には基本的に用意されています。
+R言語の場合は、基本的なパッケージ(utils)の中にあるdownload.file()関数で、
+ファイルのダウンロードが出来ます。
+
+つまり、プログラムでファイルをダウンロードできます
+
+- download.file()関数
 
 ```{r eval=FALSE}
-# link_dataベクトルの１つめのURLをダウンロード
-download.file(url = link_data[1], destfile = "datafile.xlsx")
+# ダウンロードしたいファイルのURL
+target_dl_url <- "https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.xlsx"
+
+# ファイルをダウンロードする
+download.file(url = target_dl_url, destfile = basename(target_dl_url))
 ```
+
+basename()関数をつかって、ファイル名を作成
 
 この関数を使う場合、必ず、保存するファイル名を明示しなければなりません。
 
+
+
+
 ## 複数ファイルをダウンロードする
 
-複数ファイルを一部エラーがあっても中断せずにダウンロードする典型の雛形のコードを紹介します。
+当然、プログラムでダウンロードする利点は、
+自動的に複数のダウンロードを行うことです。
+
+
+複数ファイルの自動ダウンロード
+
 
 ```{r eval=FALSE}
-download_by_urls <- function(urls, dest_dir = "."){
+# ダウンロード先のURLの集合
+urls <- link_data
 
-  for (i in seq_along(urls) ){
-    dest_path = paste0(dest_dir, "/", basename(urls[i]))
-    
-    Sys.sleep(0.3)
-
-    tryCatch({
-      download.file(url = urls[i], destfile = dest_path)
-    },
-    error = function(e){
-      message("Error!!")
-      message(e)
-    })
-  }
+for (i in seq_along(urls) ){
+  
+  #URL文字列から最後の部分をファイル名として取り出す
+  dest_path = basename(urls[i])
+  
+  # ファイルをダウンロードする
+  download.file(url = urls[i], destfile = dest_path)
 }
+
 ```
 
-実際にこのサンプルコードを走らせる場合には、保存先のディレクトリを作っておくようにしましょう。
+
+実際には、完全なURLが必要なのでlink_dataを加工する必要があります。
 
 
-# xlsxファイルをRに読み込む
+
+
+# エクセルファイルの読み込み
+
+プログラムで処理するには、まず、読み込みが必要
+
+Rプログラム内では、data.frameというデータ構造で扱う
+
+R言語では、[openxlsx](https://ycphs.github.io/openxlsx/index.html)パッケージが有名です。
 
 人口データに関しては、
 複数のデータファイルがあります。
 これらのデータを統合するためには、データを加工して結合する必要があり、それらを行うためには、まず、**データを読み込む**必要があります。
 
-ここで、扱うファイルはマイクロソフトのエクセルファイルのうち、xlsx拡張子が付くものです。
-最近では、このエクセルファイルを様々なプログラム言語のデータとして読み込むことが出来るパッケージが開発されています。
-
-R言語では、[openxlsx](https://ycphs.github.io/openxlsx/index.html)が有名です。
-
-基本はエクセルファイルがある場所のパスを渡すだけで、Rのdata.frameデータとして読み込まれます。
 
 ```{r eval=FALSE}
+library(openxlsx)
+
 # エクセルファイルを読み込む
-df_data <- openxlsx::read.xlsx("data/data.xlsx")
+df_data <- read.xlsx("data/data.xlsx")
 ```
+
+samplecode001.Rmd
+
+
+
+## 細かな指示も行える
+
+- シートの扱い
+- 列目の扱い
+- 読み込むセル範囲の指定
+
+国勢調査年のファイルを読み込む際のサンプルです
+
+censusdata_dlcode.nb.htmlにあります
+
+
+```{r eval=FALSE}
+# シートの指定やセルの指定をしたもの
+df_data <- 
+  openxlsx::read.xlsx(
+    file, colNames = FALSE,
+    sheet = "表9-1",
+    rows = c(6:56,63:103))
+```
+
+
 
 ## ファイル読み込みのサンプルコード
 
@@ -441,40 +512,105 @@ df_data <-
     rows = c(6:56,63:103))
 ```
 
+
 # データの整理
 
-省略
+data.frame構造のデータを操作する関数
+
+|関数|機能|
+|---|---|
+|filter()|行を選別|
+|arrange()|行を並び替え|
+|select()|列を選別|
+|mutate|新しい列を作成|
 
 
-# データをエクセルファイルとして書き出す
+R言語では、[dplyr](https://dplyr.tidyverse.org/)パッケージに属しています。
 
-読み込みと同じで[openxlsx](https://ycphs.github.io/openxlsx/index.html)パッケージにある
-関数を利用します。
+通常は「[tidyverse](https://www.tidyverse.org/)」を呼び出す。
 
-書き出しの関数には、data.frameを直接エクセルファイルとして書き出す方法と、
-プログラム内部で、エクセルのデータを作成し、これをエクセルファイルとして書き出す方法があることを把握しておきましょう。
 
-以下では、エクセルデータを作って、それをエクセルファイルとして出力する方法を紹介します。
+census_....htmlを見ながら実際のコード
 
-## プログラムの中のエクセルデータ
+エクセルのファイル
 
-エクセルファイルの構造をもった
-エクセルデータをRのプログラムの中に作ってしまう。
+ファイル読み込みサブルーチン
+
+
+## 複数のデータを貼り付け
+
+複数のdata.frameデータを統合する関数
+
+|関数|機能|
+|---|---|
+|rbind()|表の下に追加するイメージ|
+|left_join()|表の右に追加するイメージ|
+
+
+## 公開された技術書
+
+インターネットで公開された書籍
+
+[R for Data Science (2e)](https://r4ds.hadley.nz/)
+
+第３章の「Data transformation」が秀逸
+
+英語が苦手ならChatGPTでサポートしてもらう
+
+
+
+# エクセルファイルとして出力
+
+データの書き出しも[openxlsx](https://ycphs.github.io/openxlsx/index.html)パッケージの関数を利用
+
+- write.xlsx()関数
+
+```{r eval=FALSE}
+library(openxlsx)
+
+# 内蔵データirisをエクセルファイルへ書き出し
+write.xlsx(iris,"hoge.xlsx")
+```
+
+これは、Rのdata.frameデータを扱う場合
+
+
+
+
+
+## エクセルのデータ構造を扱う
+
+プログラム内部で、エクセルのデータを作成し、
+これをエクセルファイルとして書き出す方法があることを把握しておきましょう。
+
+**data.frameとエクセルの構造は違う**
+
+
+エクセルファイルの構造
+
+- シートがある
+- セルがある
+- 見た目の属性
+
+これをRのプログラムの中に作ることが出来る
+
+
+
 
 ```{r eval=FALSE}
 # エクセルデータを作る
-obj <- createWorkbook()
+obj <- openxlsx::createWorkbook()
 
 # 枚方市という名前のシートを追加
-addWorksheet(obj, sheetName = "枚方市")
+openxlsx::addWorksheet(obj, sheetName = "枚方市")
 
 # 枚方市という名前のシートに人口データを追加
-writeData(obj,
-          sheet = "枚方市",
-          x = census_data)
+# census_dataがRのdata.frameデータ
+openxlsx::writeData(obj, sheet = "枚方市", x = census_data)
 ```
 
-## 現実のエクセルファイルとして書き出し
+
+## エクセルデータをファイルに出力
 
 プログラムの中で作ったエクセルデータを
 現実のエクセルファイルとして書き出します。
@@ -482,21 +618,8 @@ writeData(obj,
 
 ```{r eval=FALSE}
 # エクセルファイルとして書き出す
-saveWorkbook(obj,
-             file = "hirakata.xlsx",
-             overwrite = TRUE)
+openxlsx::saveWorkbook(obj, file = "hirakata.xlsx", overwrite = TRUE)
 ```
 
-
-
-## Dinner
-
-- Eat spaghetti
-- Drink wine
-
-## Going to sleep
-
-- Get in bed
-- Count sheep
 
 

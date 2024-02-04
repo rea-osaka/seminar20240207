@@ -22,6 +22,13 @@ href_data <-
     html_attr("href")
 ```
 
+# 正規表現
+
+```{r}
+library(stringr)
+href_data %>% str_subset(".xlsx") %>% str_subset("5sai",negate = TRUE)
+```
+
 
 # ダウンロード
 
@@ -32,4 +39,15 @@ target_dl_url <- "https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.x
 # ファイルをダウンロードする
 download.file(url = target_dl_url, destfile = basename(target_dl_url))
 ```
+
+
+# 読み込み
+
+```{r}
+library(openxlsx)
+df <- read.xlsx("../data/new/jk20211201.xlsx")
+df
+```
+
+
 

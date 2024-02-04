@@ -1775,6 +1775,17 @@ href_data &lt;-
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
+<div id="正規表現" class="section level1">
+<h1>正規表現</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzdHJpbmdyKVxuaHJlZl9kYXRhICU+JSBzdHJfc3Vic2V0KFwiLnhsc3hcIikgJT4lIHN0cl9zdWJzZXQoXCI1c2FpXCIsbmVnYXRlID0gVFJVRSlcbmBgYCJ9 -->
+<pre class="r"><code>library(stringr)
+href_data %&gt;% str_subset(&quot;.xlsx&quot;) %&gt;% str_subset(&quot;5sai&quot;,negate = TRUE)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
 <div id="ダウンロード" class="section level1">
 <h1>ダウンロード</h1>
 <!-- rnb-text-end -->
@@ -1788,10 +1799,22 @@ download.file(url = target_dl_url, destfile = basename(target_dl_url))</code></p
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="読み込み" class="section level1">
+<h1>読み込み</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShvcGVueGxzeClcbmRmIDwtIHJlYWQueGxzeChcIi4uL2RhdGEvbmV3L2prMjAyMTEyMDEueGxzeFwiKVxuZGZcbmBgYCJ9 -->
+<pre class="r"><code>library(openxlsx)
+df &lt;- read.xlsx(&quot;../data/new/jk20211201.xlsx&quot;)
+df</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2FtcGxlIENvZGUgMDAxIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIOOCueOCr+ODrOOCpOODlOODs+OCsAoKYGBge3J9CmxpYnJhcnkocnZlc3QpCmxpYnJhcnkodGlkeXZlcnNlKQoKIyDkurrlj6Pjg4fjg7zjgr/jgpLlhazplovjgZfjgabjgYTjgovlpKfpmKrlupzjga5VUkwKdGFyZ2V0X3VybCA8LSAiaHR0cHM6Ly93d3cucHJlZi5vc2FrYS5sZy5qcC90b3VrZWkvamlua291L2ppbmtvdS14bHNsaXN0Lmh0bWwiCgojIOODmuODvOOCuOOCkuWPluW+lwpub2RlX2RhdGEgPC0gcmVhZF9odG1sKHRhcmdldF91cmwsIGVuY29kaW5nID0gInNoaWZ0X2ppcyIpCgojIOani+mAoOOBp+mBuOWIpQpocmVmX2RhdGEgPC0gCiAgICBub2RlX2RhdGEgJT4lIAogICAgaHRtbF9ub2RlcygidGJvZHkgdGQgYSIpICU+JSAKICAgIGh0bWxfYXR0cigiaHJlZiIpCmBgYAoKCiMg44OA44Km44Oz44Ot44O844OJCgpgYGB7cn0KIyDjg4Djgqbjg7Pjg63jg7zjg4njgZfjgZ/jgYTjg5XjgqHjgqTjg6vjga5VUkwKdGFyZ2V0X2RsX3VybCA8LSAiaHR0cHM6Ly93d3cucHJlZi5vc2FrYS5sZy5qcC9hdHRhY2gvMzM4Ny8wMDAxNDY5MC9qazIwMjQwMTAxLnhsc3giCgojIOODleOCoeOCpOODq+OCkuODgOOCpuODs+ODreODvOODieOBmeOCiwpkb3dubG9hZC5maWxlKHVybCA9IHRhcmdldF9kbF91cmwsIGRlc3RmaWxlID0gYmFzZW5hbWUodGFyZ2V0X2RsX3VybCkpCmBgYAoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2FtcGxlIENvZGUgMDAxIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIOOCueOCr+ODrOOCpOODlOODs+OCsAoKYGBge3J9CmxpYnJhcnkocnZlc3QpCmxpYnJhcnkodGlkeXZlcnNlKQoKIyDkurrlj6Pjg4fjg7zjgr/jgpLlhazplovjgZfjgabjgYTjgovlpKfpmKrlupzjga5VUkwKdGFyZ2V0X3VybCA8LSAiaHR0cHM6Ly93d3cucHJlZi5vc2FrYS5sZy5qcC90b3VrZWkvamlua291L2ppbmtvdS14bHNsaXN0Lmh0bWwiCgojIOODmuODvOOCuOOCkuWPluW+lwpub2RlX2RhdGEgPC0gcmVhZF9odG1sKHRhcmdldF91cmwsIGVuY29kaW5nID0gInNoaWZ0X2ppcyIpCgojIOani+mAoOOBp+mBuOWIpQpocmVmX2RhdGEgPC0gCiAgICBub2RlX2RhdGEgJT4lIAogICAgaHRtbF9ub2RlcygidGJvZHkgdGQgYSIpICU+JSAKICAgIGh0bWxfYXR0cigiaHJlZiIpCmBgYAoKIyDmraPopo/ooajnj74KCmBgYHtyfQpsaWJyYXJ5KHN0cmluZ3IpCmhyZWZfZGF0YSAlPiUgc3RyX3N1YnNldCgiLnhsc3giKSAlPiUgc3RyX3N1YnNldCgiNXNhaSIsbmVnYXRlID0gVFJVRSkKYGBgCgoKIyDjg4Djgqbjg7Pjg63jg7zjg4kKCmBgYHtyfQojIOODgOOCpuODs+ODreODvOODieOBl+OBn+OBhOODleOCoeOCpOODq+OBrlVSTAp0YXJnZXRfZGxfdXJsIDwtICJodHRwczovL3d3dy5wcmVmLm9zYWthLmxnLmpwL2F0dGFjaC8zMzg3LzAwMDE0NjkwL2prMjAyNDAxMDEueGxzeCIKCiMg44OV44Kh44Kk44Or44KS44OA44Km44Oz44Ot44O844OJ44GZ44KLCmRvd25sb2FkLmZpbGUodXJsID0gdGFyZ2V0X2RsX3VybCwgZGVzdGZpbGUgPSBiYXNlbmFtZSh0YXJnZXRfZGxfdXJsKSkKYGBgCgoKIyDoqq3jgb/ovrzjgb8KCmBgYHtyfQpsaWJyYXJ5KG9wZW54bHN4KQpkZiA8LSByZWFkLnhsc3goIi4uL2RhdGEvbmV3L2prMjAyMTEyMDEueGxzeCIpCmRmCmBgYAoKCgo=</div>
 
 
 

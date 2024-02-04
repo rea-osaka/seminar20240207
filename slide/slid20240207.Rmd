@@ -266,7 +266,11 @@ df_data <-
 
 # データの整理
 
-data.frame構造のデータを操作する関数
+data.frameとは
+
+![data.frame](dfimage.png)
+
+## data.frame構造のデータを操作する関数
 
 |関数|機能|
 |---|---|
@@ -288,7 +292,7 @@ R言語では、[dplyr](https://dplyr.tidyverse.org/)パッケージに属して
 |関数|機能|
 |---|---|
 |rbind()|表の下に追加するイメージ|
-|left.join()|表の右に追加するイメージ|
+|left_join()|表の右に追加するイメージ|
 
 
 ## 公開された技術書
