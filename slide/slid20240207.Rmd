@@ -1,0 +1,366 @@
+---
+title: "人口動態データを効率的に分析する"
+author: 株式会社天満橋鑑定事務所 福田俊介
+date: 2024/2/7
+output:
+  revealjs::revealjs_presentation:
+    theme: sky
+    highlight: tango
+    center: true
+    css: styles.css
+    reveal_options:
+            slideNumber: true
+---
+
+# 大量のデータを効率的に処理
+
+が今日のテーマ
+
+データの準備には大量のデータを扱います
+
+これを効率化すると
+
+結果、データ分析の効率を上げることが出来ます
+
+## 人口データ
+
+例として人口データを取り上げます
+
+- 価格動向報告でおなじみ
+- 受給動向に関連している
+
+
+## 人口データの中身
+
+- 総人口
+- 男女
+- 年齢別（５歳区切り、年少、生産、老齢）
+- 増減（自然、社会）
+- 世帯
+
+86地域、5年（６０ヶ月）以上のデータ
+
+大阪府のWebページで公開されています。
+
+https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html
+
+
+## 意外と大量の作業
+
+データを分析するための準備作業
+
+大変で数をこなせない
+
+効率化できれば、分析も効率化
+
+
+# プログラムによる自動化
+
+「データの準備とは」をまとめれば
+
+- データの入手
+- 入手したデータの内容確認
+- データ分析しやすい形へデータを編集
+
+全ての場面でプログラミングが役に立ちます
+
+今日もデータ分析を得意とするR言語での例
+
+
+## データの入手
+
+プログラムを使って
+
+- Webページからダウンロード先の情報を獲得
+- その情報をもとにダウンロード
+
+
+## 入手したデータ内容の確認
+
+- データファイルをRのデータとして読み込む
+- データの構造を把握
+- どのように編集するかを決める
+
+
+## データ分析しやすい形へデータを編集
+
+- データをRのプログラムで編集
+- データをエクセル等のファイルとして出力
+
+
+## 具体的な成果
+
+https://github.com/rea-osaka/seminar20240207
+
+
+
+# データを入手する技術
+
+大まかに２つの方法があります。
+
+- API(Application Programming Interface)
+- ページの構造を読み解くスクレイピング
+
+## スクレイピングとは
+
+スクレイピングとは、一般に、Webページ上の情報を機械的に取得することを言います。
+
+有名なスクレイピングパッケージ
+
+- https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+- https://rvest.tidyverse.org/
+
+
+## スクレイピングの仕組み
+
+スクレイピングを行うための前提知識
+
+Webページは**html言語**
+
+```{html eval=FALSE}
+<html>
+...
+  <body>
+  ...
+  <a href="https://google.com" >googleのページ</a>
+  ...
+  <a href="https://www.yahoo.co.jp/" >Yahoo Japanのページ</a>
+  ...
+  </body>  
+</html>
+```
+
+ページの中にある全てのaタグのhrefを調べる
+
+リンク先URLを収集することが出来る
+
+
+
+
+## R言語でスクレイピング
+
+[rvest](https://stringr.tidyverse.org/)パッケージを利用
+
+- read_html()
+- html_nodes()
+- html_attr()
+
+```{r eval=FALSE, message=FALSE}
+library(rvest)
+library(tidyverse)
+
+# 人口データを公開している大阪府のURL
+target_url <- "https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html"
+
+# ページを取得
+node_data <- read_html(target_url, encoding = "shift_jis")
+
+# 構造で選別
+href_data <- node_data %>% html_nodes("tbody td a") %>%  html_attr("href")
+```
+
+
+## ある規則の文字列を表現する正規表現
+
+- "https"で始まっている
+- ".xlsx"で終わっている
+- "携帯電話の番号みたいな文字列"
+
+これら**正規表現**を利用して、文字列の選別を行えます。
+
+- "^https"
+- "\\.xlsx$"
+- "0[89]0-[0-9]{4}-[0-9]{4}"
+
+
+## 正規表現を使った文字列比較
+
+R言語の場合、[stringr](https://stringr.tidyverse.org/)パッケージに使いやすい
+文字列処理の関数があります。
+
+- str_subset()関数
+
+```{r eval=FALSE, message=FALSE}
+library(stringr)
+
+#必要なリンクのみを取り出す
+link_data <- 
+    href_data %>%
+    stringr::str_subset(".xlsx$") %>% 
+    stringr::str_subset("5sai", negate = TRUE)
+```
+
+
+## データをダウンロードする
+
+プログラムでファイルをダウンロードできます
+
+- download.file()関数
+
+```{r eval=FALSE}
+# ダウンロードしたいファイルのURL
+target_dl_url <- "https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.xlsx"
+
+# ファイルをダウンロードする
+download.file(url = target_dl_url, destfile = basename(target_dl_url))
+```
+
+
+## 複数ファイルをダウンロードする
+
+複数ファイルの自動ダウンロード
+
+
+```{r eval=FALSE}
+# ダウンロード先のURLの集合
+urls <- link_data
+
+for (i in seq_along(urls) ){
+  
+  #URL文字列から最後の部分をファイル名として取り出す
+  dest_path = basename(urls[i])
+  
+  # ファイルをダウンロードする
+  download.file(url = urls[i], destfile = dest_path)
+}
+
+```
+
+
+
+# エクセルファイルの読み込み
+
+プログラムで処理するには、まず、読み込みが必要
+
+Rプログラム内では、data.frameというデータ構造で扱う
+
+R言語では、[openxlsx](https://ycphs.github.io/openxlsx/index.html)パッケージが有名です。
+
+
+```{r eval=FALSE}
+library(openxlsx)
+
+# エクセルファイルを読み込む
+df_data <- read.xlsx("data/data.xlsx")
+```
+
+
+## 細かな指示も行える
+
+- シートの扱い
+- 列目の扱い
+- 読み込むセル範囲の指定
+
+国勢調査年のファイルを読み込む際のサンプルです
+
+```{r eval=FALSE}
+# シートの指定やセルの指定をしたもの
+df_data <- 
+  openxlsx::read.xlsx(
+    file, colNames = FALSE,
+    sheet = "表9-1",
+    rows = c(6:56,63:103))
+```
+
+
+
+# データの整理
+
+data.frame構造のデータを操作する関数
+
+|関数|機能|
+|---|---|
+|filter()|行を選別|
+|arrange()|行を並び替え|
+|select()|列を選別|
+|mutate|新しい列を作成|
+
+
+R言語では、[dplyr](https://dplyr.tidyverse.org/)パッケージに属しています。
+
+通常は「[tidyverse](https://www.tidyverse.org/)」を呼び出す。
+
+
+## 複数のデータを貼り付け
+
+複数のdata.frameデータを統合する関数
+
+|関数|機能|
+|---|---|
+|rbind()|表の下に追加するイメージ|
+|left.join()|表の右に追加するイメージ|
+
+
+## 公開された技術書
+
+インターネットで公開された書籍
+
+[R for Data Science (2e)](https://r4ds.hadley.nz/)
+
+第３章の「Data transformation」が秀逸
+
+英語が苦手ならChatGPTでサポートしてもらう
+
+
+
+# エクセルファイルとして出力
+
+データの書き出しも[openxlsx](https://ycphs.github.io/openxlsx/index.html)パッケージの関数を利用
+
+- write.xlsx()関数
+
+```{r eval=FALSE}
+library(openxlsx)
+
+# 内蔵データirisをエクセルファイルへ書き出し
+write.xlsx(iris,"hoge.xlsx")
+```
+
+これは、Rのdata.frameデータを扱う場合
+
+
+## エクセルのデータ構造を扱う
+
+エクセルファイルの構造
+
+- シートがある
+- セルがある
+- 見た目の属性
+
+これをRのプログラムの中に作ることが出来る
+
+
+```{r eval=FALSE}
+# エクセルデータを作る
+obj <- openxlsx::createWorkbook()
+
+# 枚方市という名前のシートを追加
+openxlsx::addWorksheet(obj, sheetName = "枚方市")
+
+# 枚方市という名前のシートに人口データを追加
+# census_dataがRのdata.frameデータ
+openxlsx::writeData(obj, sheet = "枚方市", x = census_data)
+```
+
+## エクセルデータをファイルに出力
+
+プログラムの中で作ったエクセルデータを
+現実のエクセルファイルとして書き出します。
+
+
+```{r eval=FALSE}
+# エクセルファイルとして書き出す
+openxlsx::saveWorkbook(obj, file = "hirakata.xlsx", overwrite = TRUE)
+```
+
+# Chat GPT
+
+Chat GPTは、よく GPT か GTP か 混乱する
+
+- Generative Pre-trained Transformer
+- General Purpose Technology
+
+
+## ChatGPTとのやりとり
+
+https://chat.openai.com/share/a52ace68-3d6e-49b3-a520-4847af2ca4dc

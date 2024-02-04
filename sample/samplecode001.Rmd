@@ -1,0 +1,35 @@
+---
+title: "Sample Code 001"
+output: html_notebook
+---
+
+# スクレイピング
+
+```{r}
+library(rvest)
+library(tidyverse)
+
+# 人口データを公開している大阪府のURL
+target_url <- "https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html"
+
+# ページを取得
+node_data <- read_html(target_url, encoding = "shift_jis")
+
+# 構造で選別
+href_data <- 
+    node_data %>% 
+    html_nodes("tbody td a") %>% 
+    html_attr("href")
+```
+
+
+# ダウンロード
+
+```{r}
+# ダウンロードしたいファイルのURL
+target_dl_url <- "https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.xlsx"
+
+# ファイルをダウンロードする
+download.file(url = target_dl_url, destfile = basename(target_dl_url))
+```
+

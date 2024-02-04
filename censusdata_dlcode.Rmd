@@ -1,0 +1,1013 @@
+---
+title: "人口データをダウンロードするコード"
+output: html_notebook
+---
+
+# ライブラリ
+
+```{r}
+# 整然データの操作
+library(tidyverse)
+
+# スクレイピング
+library(rvest)
+
+# エクセルファイルの操作
+library(openxlsx)
+```
+
+必要ライブラリの準備
+
+
+# スクレイピング
+
+
+```{r}
+##########################################################
+# 人口に関するデータのURL
+##########################################################
+
+
+# 令和２年（２０２０年）１１月１日以降のエクセルファイルのリンク
+#///////////////////////////////////////////////////////////////
+new_census_urls <- function(){
+  target_page_url <- 
+    "https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html"
+  
+  # 必ずエンコーディングで "shift_jis" を指定する
+  node_data <- read_html(target_page_url, encoding = "shift_jis")
+  
+  # 欲しいファイルのlinkを選別
+  
+  ## tbody内のlinkを全て得る
+  href_data <- 
+    node_data %>% 
+    html_nodes("tbody td a") %>% 
+    html_attr("href")
+  
+  ## 拡張子がxlsxのもののみに絞り込む
+  link_data <- 
+    href_data %>%
+    stringr::str_subset(".xlsx$") %>% 
+    stringr::str_subset("5sai", negate = TRUE)
+  
+  # ページからスクレイピングしたURLは、一部の文字列なので、完全なURLにする。
+  site_url <- "https://www.pref.osaka.lg.jp"
+  link_data <- paste0(site_url, link_data)
+  
+  return(link_data)
+}
+
+
+# 令和２年（２０２０年）１０月１日以前のエクセルファイルのリンク
+#/////////////////////////////////////////////////////////////////////
+old_census_urls <- function(){
+  target_page_url <- 
+    "https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-h.html"
+  
+  # 必ずエンコーディングで "shift_jis" を指定する
+  node_data <- read_html(target_page_url, encoding = "shift_jis")
+  
+  ## tbody内のlinkを全て得る
+  href_data <- 
+    node_data %>% 
+    html_nodes("a") %>% 
+    html_attr("href")
+  
+  ## 拡張子がxlsxのもののみに絞り込む
+  link_data <- 
+    href_data %>%
+    stringr::str_subset(".xlsx$") %>% 
+      stringr::str_subset("5sai", negate = TRUE)
+
+  # ページからスクレイピングしたURLは、一部の文字列なので、完全なURLにする。
+  site_url <- "https://www.pref.osaka.lg.jp"
+  link_data <- paste0(site_url, link_data)
+  
+  return(link_data)
+}
+
+# 令和２年（２０２０年）１０月１日のエクセルファイルのリンク
+# これは固定URLを返す若しくは使うだけでよいかも
+#////////////////////////////////////////////////////////////////
+census_2020_urls <- function(){
+  target_page_url <- 
+    "https://www.pref.osaka.lg.jp/toukei/top_portal/kokucho.html"
+  
+  # 必ずエンコーディングで "shift_jis" を指定する
+  node_data <- read_html(target_page_url, encoding = "shift_jis")
+  
+  # 欲しいファイルのlinkを選別
+  ## tbody内のlinkを全て得る
+  href_data <- 
+    node_data %>% 
+    html_nodes("tbody td a") %>% 
+    html_attr("href")
+  
+  ## 拡張子がxlsxのもののみに絞り込む
+  link_data <- 
+    href_data %>%
+    stringr::str_subset("R2.*_syousai.xlsx$")
+    #stringr::str_subset("5sai", negate = TRUE)
+  
+  # ページからスクレイピングしたURLは、一部の文字列なので、完全なURLにする。
+  site_url <- "https://www.pref.osaka.lg.jp"
+  link_data <- paste0(site_url, link_data)
+  
+  return(link_data)
+}
+
+##########################################################
+# 年齢別人口に関するデータのURL
+##########################################################
+census_5sai_urls <- function(){
+  
+  # 新しいデータ
+  #######################
+  new_target_page_url <- 
+    "https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-xlslist.html"
+  
+  # 必ずエンコーディングで "shift_jis" を指定する
+  node_data <- read_html(new_target_page_url, encoding = "shift_jis")
+  
+  # 欲しいファイルのlinkを選別
+  
+  ## tbody内のlinkを全て得る
+  new_data_link <- 
+    node_data %>% 
+    html_nodes("tbody td a") %>% 
+    html_attr("href") %>% 
+    stringr::str_subset(".xlsx$") %>%  
+    stringr::str_subset("5sai")
+
+  # 古いデータ
+  #######################
+  old_target_page_url <- 
+    "https://www.pref.osaka.lg.jp/toukei/jinkou/jinkou-h.html"
+  
+  # 必ずエンコーディングで "shift_jis" を指定する
+  node_data <- read_html(old_target_page_url, encoding = "shift_jis")
+  
+  # 欲しいファイルのlinkを選別
+  
+  ## tbody内のlinkを全て得る
+  old_data_link <- 
+    node_data %>% 
+    html_nodes("tbody td a") %>% 
+    html_attr("href") %>% 
+    stringr::str_subset(".xlsx$") %>%  
+    stringr::str_subset("5sai")
+
+  # 新しい、古いデータの統合
+  ans_link <- c(new_data_link,old_data_link)
+    
+  # ページからスクレイピングしたURLは、一部の文字列なので、完全なURLにする。
+  site_url <- "https://www.pref.osaka.lg.jp"
+  link_data <- paste0(site_url, ans_link)
+  
+  return(link_data)
+}
+```
+
+人口に関するもの３種、年齢別に関するもの１種
+
+# データのダウンロード
+
+## サブルーチン
+
+```{r}
+# ファイルダウンロードの定番関数
+download_by_urls <- function(urls, dest_dir = "."){
+
+  # dest_dirの確保
+  if(!confirm_dir_path(dest_dir)){
+    warning("dest_dir is not exist and is not made.")
+    return()
+  }
+
+  # エラーURLを確認できるようにする
+  e_url = vector()
+
+  for (i in seq_along(urls) ){
+    dest_path = paste0(dest_dir, "/", basename(urls[i]))
+
+    Sys.sleep(0.3)
+
+    tryCatch({
+      download.file(url = urls[i], destfile = dest_path)
+    },
+    error = function(e){
+      message("Error!!")
+      message(e)
+      message("")
+      e_url <<- c(e_url, urls[i])
+    }
+    )
+  }
+
+  if(length(e_url)>0){
+    message("following urls are error.")
+    print(e_url)
+  }
+
+}
+
+# ダウンロード先のディレクトリの確保のサブルーチン
+confirm_dir_path <- function(path_string){
+
+  if(dir.exists(paths = path_string)){
+    return(TRUE)
+  }
+
+  message(sprintf("%s is not exist.", path_string))
+  ans <- readline("Do you create this directory? y/n : ")
+
+  if (ans == "y"){
+    dir.create(path_string, recursive = TRUE)
+    message((sprintf("%s has been created.", path_string)))
+    return(TRUE)
+  }
+
+  return(FALSE)
+}
+
+```
+
+## ダウンロード処理
+
+```{r}
+# 新しいデータのダウンロード
+new_census_urls() %>% download_by_urls(dest_dir = "data/new")
+
+# 古いデータのダウンロード
+old_census_urls() %>% download_by_urls(dest_dir = "data/old")
+
+# 国勢調査年月
+census_2020_urls() %>% download_by_urls(dest_dir = "data/2020")
+
+# 年齢別データのダウンロード
+census_5sai_urls() %>% download_by_urls(dest_dir = "data/by_age")
+
+```
+
+データの形式ごとにディレクトリを分けてダウンロード
+
+
+# データの読み込みと統一形式への変換
+
+## 統一地域名の定義
+
+```{r}
+# 地域名の定義
+area_id <- c(
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  NA,
+  
+  27100,
+  27102,
+  27103,
+  27104,
+  27106,
+  27107,
+  27108,
+  27109,
+  27111,
+  27113,
+  27114,
+  27115,
+  27116,
+  27117,
+  27118,
+  27119,
+  27120,
+  27121,
+  
+  27122,
+  27123,
+  27124,
+  27125,
+  27126,
+  27127,
+  27128,
+  
+  27140,
+  27141,
+  27142,
+  27143,
+  27144,
+  27145,
+  27146,
+  27147,
+  
+  27202,
+  27203,
+  27204,
+  27205,
+  27206,
+  27207,
+  27208,
+  27209,
+  27210,
+  27211,
+  
+  27212,
+  27213,
+  27214,
+  27215,
+  27216,
+  27217,
+  27218,
+  27219,
+  27220,
+  27221,
+  27222,
+  27223,
+  27224,
+  27225,
+  27226,
+  27227,
+  27228,
+  27229,
+  27230,
+  27231,
+  27232,
+  
+  27301,
+  27321,
+  27322,
+  27341,
+  27361,
+  27362,
+  27366,
+  27381,
+  27382,
+  27383
+)
+
+area_name <- 
+  c("大阪府全市町村",
+    "大阪市地域",
+    "北大阪地域",
+    "三島地域",
+    "豊能地域",
+    "東大阪地域",
+    "北河内地域",
+    "中河内地域",
+    "南河内地域",
+    "泉州地域",
+    "泉北地域",
+    "泉南地域",
+    "大阪市全区",
+    "大阪市都島区",
+    "大阪市福島区",
+    "大阪市此花区",
+    "大阪市西区",
+    "大阪市港区",
+    "大阪市大正区",
+    "大阪市天王寺区",
+    "大阪市浪速区",
+    "大阪市西淀川区",
+    "大阪市東淀川区",
+    "大阪市東成区",
+    "大阪市生野区",
+    "大阪市旭区",
+    "大阪市城東区",
+    "大阪市阿倍野区",
+    "大阪市住吉区",
+    "大阪市東住吉区",
+    "大阪市西成区",
+    "大阪市淀川区",
+    "大阪市鶴見区",
+    "大阪市住之江区",
+    "大阪市平野区",
+    "大阪市北区",
+    "大阪市中央区",
+    "堺市",
+    "堺市堺区",
+    "堺市中区",
+    "堺市東区",
+    "堺市西区",
+    "堺市南区",
+    "堺市北区",
+    "堺市美原区",
+    "岸和田市",
+    "豊中市",
+    "池田市",
+    "吹田市",
+    "泉大津市",
+    "高槻市",
+    "貝塚市",
+    "守口市",
+    "枚方市",
+    "茨木市",
+    "八尾市",
+    "泉佐野市",
+    "富田林市",
+    "寝屋川市",
+    "河内長野市",
+    "松原市",
+    "大東市",
+    "和泉市",
+    "箕面市",
+    "柏原市",
+    "羽曳野市",
+    "門真市",
+    "摂津市",
+    "高石市",
+    "藤井寺市",
+    "東大阪市",
+    "泉南市",
+    "四條畷市",
+    "交野市",
+    "大阪狭山市",
+    "阪南市",
+    "島本町",
+    "豊能町",
+    "能勢町",
+    "忠岡町",
+    "熊取町",
+    "田尻町",
+    "岬町",
+    "太子町",
+    "河南町",
+    "千早赤阪村"
+  )
+
+cityID <- data.frame(area_id,area_name)
+
+```
+
+一意に決定できる地域名を定義しておく
+
+## ファイル読み込みサブルーチン
+
+### 人口に関して
+
+#### 統一列名の定義
+```{r}
+col_name <- c("areaname",
+              "hh",
+              "pt",
+              "pm",
+              "pf",
+              
+              "yct",
+              "ycn",
+              "ycnib",
+              "ycndd",
+              "ycs",
+              
+              "lmct",
+              "lmcn",
+              "lmcnib",
+              "lmcndd",
+              "lmcs",
+              
+              "pph",
+              "ppa",
+              
+              "date"
+              
+              )
+```
+
+### 新しい形式の読み込み
+```{r}
+get_date_from_new_data <- function(file){
+    a <- openxlsx::read.xlsx(file, colNames = FALSE)
+    
+    # １行２列めに時点文字列がある
+    # 新しいデータの期間は令和のみ
+    ans <- a[1,2] %>% 
+      stringi::stri_trans_general("fullwidth-halfwidth") %>% 
+      stringr::str_match(pattern =  r"(令和(\d+)年(\d+)月(\d+)日現在)")
+    
+    y <- 2018 + as.numeric(ans[1,2])
+    m <- as.numeric(ans[1,3])
+    
+    return(lubridate::as_date(sprintf("%d/%d/%d",y,m,1)))
+}
+
+get_data_from_new_data <- function(file) {
+  # 人口データのある行から取り込み開始 startRow = 8 で決め打ち
+  a <- openxlsx::read.xlsx(file, colNames = FALSE, startRow = 8)
+  
+  # 2列目がNA（人口データのない)行を削除
+  a <- a[!is.na(a[,2]),]
+  
+  # 1列目（市区町村名）の文字列に含まれる空白を削除
+  a[,1] <- stringr::str_replace_all(a[,1], "\\s", "")
+  
+  # 名前を付け替える
+  a[,1] <- cityID[,2]
+  
+  return(a)
+}
+
+read_new_data <- function(datadir = "./"){
+  
+  files <- dir(datadir, full.names = TRUE)
+  
+  ans <- NULL
+
+  for (i in seq_along(files) ){
+    
+    # 各ファイル毎の処理
+    tmp_date <- get_date_from_new_data(files[i])
+    tmp_data <- get_data_from_new_data(files[i])
+    
+    if (tmp_date <= lubridate::as_date("20210901")){
+      # 2021年09月1日以前は１年間の増減データが無い
+      tmp_data <- 
+        tmp_data %>% 
+        mutate(X11 = X6,
+               X12 = X7,
+               X13 = X8,
+               X14 = X9,
+               X15 = X10,
+               X16 = X11,
+               X17 = X12) %>%
+        mutate(X6 = NA,
+               X7 = NA,
+               X8 = NA,
+               X9 = NA,
+               X10 = NA,
+               date = tmp_date)
+    }else{
+      tmp_data <- 
+        tmp_data %>% 
+        mutate(date = tmp_date)
+    }
+
+    ans <- rbind(ans, tmp_data)
+  }
+  
+  colnames(ans) <- col_name
+  return(ans)
+
+}
+```
+
+
+### 古い形式の読み込み
+```{r}
+
+make_date_from_string <- function(data_str){
+    tmp <- data_str %>% 
+      stringi::stri_trans_general("fullwidth-halfwidth") %>% 
+      stringr::str_match(pattern =  r"(令和(\d+)年(\d+)月)")
+    
+      if (!is.na(tmp[1,1])){
+        y <- 2018 + as.numeric(tmp[1,2])
+        m <- as.numeric(tmp[1,3])
+      
+      }else{
+        tmp <- data_str %>% 
+          stringi::stri_trans_general("fullwidth-halfwidth") %>% 
+          stringr::str_match(pattern =  r"(平成(\d+)年(\d+)月)")
+          
+          if(!is.na(tmp[1,1])){
+            y <- 1988 + as.numeric(tmp[1,2])
+            m <- as.numeric(tmp[1,3])
+        
+          }else{
+            tmp <- data_str %>% 
+              stringi::stri_trans_general("fullwidth-halfwidth") %>% 
+              stringr::str_match(pattern =  r"(令和元年(\d+)月)")
+              y <- 2019
+              m <- as.numeric(tmp[1,2])
+            
+          }
+        
+    }
+      
+    ans_date <- lubridate::as_date(sprintf("%d/%d/%d",y,m,1))
+    ans_date
+}
+
+read_old_data_sub <- function(file) {
+  
+  ans <- NULL
+  sheet_names <- getSheetNames(file = file)
+  
+  for (i in seq_along(sheet_names)){
+    tmp_date <- make_date_from_string(sheet_names[i])
+
+    if (tmp_date < lubridate::as_date("2015/11/1")){
+      # 平成２７年１０月１日 54;10(201501_10.xlsx)以前
+      #左側データは5列
+      #右側データは5列
+      #message("check002")
+      # 本件ではデータとして取り込まない
+      #message(sprintf("%s is wrong term data. so operation is aborted.",as.character.Date(tmp_date)))
+      next
+    }
+        
+    # 平成２７年１１月１日 51;11(201511_12.xlsx)以後
+    #左側データは6列
+    #右側データは5列
+    #左側の1列２列は合体させて名前にする
+    tmp_left <- 
+      openxlsx::read.xlsx(file,
+                          sheet = sheet_names[i],
+                          colNames = FALSE, 
+                          startRow = 7,
+                          cols = 1:6) %>% 
+      mutate(X1 = paste0(X1,X2) %>% 
+               stringr::str_replace_all("\\s", "") %>% 
+               stringr::str_replace_all("NA", ""),
+             X2 = X3,
+             X3 = X4,
+             X4 = X5,
+             X5 = X6) %>% 
+      select(X1:X5)
+    
+    tmp_right <- 
+      openxlsx::read.xlsx(file,
+                          sheet = sheet_names[i],
+                          colNames = FALSE, 
+                          startRow = 7,
+                          cols = 7:11) %>% 
+      select(X1:X5)
+    
+    tmp_lr <- rbind(tmp_left,tmp_right)
+    
+    # 増減列等を追加
+    tmp_lr <- 
+      tmp_lr %>%
+      mutate(X1 = cityID[,2],
+             X6 = NA,
+             X7 = NA,
+             X8 = NA,
+             X9 = NA,
+             X10 = NA,
+             X11 = NA,
+             X12 = NA,
+             X13 = NA,
+             X14 = NA,
+             X15 = NA,
+             X16 = X3/X2,
+             X17 = NA,
+             date = tmp_date
+             )
+    
+    ans <- rbind(ans,tmp_lr)
+  }
+
+  return(ans)
+} 
+
+read_old_data <- function(datadir = "./"){
+  
+  files <- dir(datadir, full.names = TRUE)
+  
+  ans <- NULL
+
+  for (i in seq_along(files) ){
+    
+    # 各ファイル毎の処理  
+    tmp_data <- read_old_data_sub(files[i])
+    ans <- rbind(ans, tmp_data)
+  }
+  
+  colnames(ans) <- col_name
+  return(ans)
+
+}
+
+```
+
+
+
+
+### 国勢調査年形式の読み込み
+```{r}
+
+read_2020_data <- function(file) {
+  tmp_data <- openxlsx::read.xlsx(file, colNames = FALSE, sheet = "表9-1", rows = c(6:56,63:103))
+  
+  # 2列目がNA（人口データのない)行を削除
+  tmp_data <- tmp_data[!is.na(tmp_data[,2]),]
+  
+  rn <- nrow(tmp_data)
+  # 1列目（市区町村名）の文字列に含まれる空白を削除
+  tmp_data  <- 
+    tmp_data %>%
+    mutate(X1 = X1 %>% 
+             stringr::str_replace_all("\\s", "") %>% 
+             stringr::str_replace_all("チイキ$", "") %>% 
+             stringr::str_replace_all("カワチ$", "") %>% 
+             stringr::str_replace_all("チョウ$", "") %>% 
+             stringr::str_replace_all("ハラ$", "") %>% 
+             stringr::str_replace_all("シ$", "") %>% 
+             stringr::str_replace_all("ク$", "") %>% 
+             stringr::str_replace_all("[（|）]", ""),
+           X5 = X4,
+           X4 = X3,
+           X3 = X2,
+           X2 = X7,
+           X17 = X11,
+           X6 = NA,
+           X7 = NA,
+           X8 = NA,
+           X9 = NA,
+           X10 = NA,
+           X11 = NA,
+           X12 = NA,
+           X13 = NA,
+           X14 = NA,
+           X15 = NA,
+           X16 = X3 / X2,
+           date = as_date("2020/10/1")
+           ) %>% 
+    select(X1:X11,X12:X16,X17,date)
+
+  # 名前を付け替える
+  tmp_data[,1] <- cityID[,2]
+  
+  colnames(tmp_data) <- col_name
+  return(tmp_data)
+}
+
+```
+
+
+### 年齢別人口に関して
+
+```{r}
+
+get_data_from_5sai_data <- function(file) {
+  
+  # データ読込
+  a <- openxlsx::read.xlsx(file, colNames = FALSE, startRow = 4)
+
+  # このファイルの時点を探索
+  tmp_date_data <- openxlsx::read.xlsx(file, colNames = FALSE)
+  tmp_date <- tmp_date_data[2,1] %>% make_date_from_string()
+
+  # 2列目がNA（人口データのない)行を削除
+  a <- a[!is.na(a[,2]),]
+  
+  # 1列目（市区町村名）の文字列に含まれる空白を削除
+  a[,1] <- stringr::str_replace_all(a[,1], "\\s", "")
+  
+  # 2列目が「市区町村」（人口データのない)行を削除
+  a <- a[!str_detect(a[,1],"市区町村"),]
+
+  a <- a %>%
+    mutate(X2 = as.numeric(X2),
+           X3 = as.numeric(X3),
+           X4 = as.numeric(X4),
+           X5 = as.numeric(X5),
+           X6 = as.numeric(X6),
+           X7 = as.numeric(X7),
+           X8 = as.numeric(X8),
+           X9 = as.numeric(X9),
+           X10 = as.numeric(X10),
+           X11 = as.numeric(X11),
+           X12 = as.numeric(X12),
+           X13 = as.numeric(X13),
+           X14 = as.numeric(X14),
+           X15 = as.numeric(X15),
+           X16 = as.numeric(X16),
+           X17 = as.numeric(X17),
+           X18 = as.numeric(X18),
+           X19 = as.numeric(X19),
+           X20 = as.numeric(X20),
+           X21 = as.numeric(X21),
+           X22 = as.numeric(X22))
+  
+  # a1は全体、a2は男、a3は女
+  # 86行づつになっている
+  a1 <- a[1:86,]
+  a2 <- a[87:172,]
+  a3 <- a[173:258,]
+  
+  # 一意になるように先に地域名を付け替える
+  a1[,1] <- cityID[,2]
+  a2[,1] <- cityID[,2]
+  a3[,1] <- cityID[,2]
+  
+  colnames(a1) <- c("areaname",
+                    "t",
+                    "t1",
+                    "t2",
+                    "t3",
+                    "t4",
+                    "t5",
+                    "t6",
+                    "t7",
+                    "t8",
+                    "t9",
+                    "t10",
+                    "t11",
+                    "t12",
+                    "t13",
+                    "t14",
+                    "t15",
+                    "t16",
+                    "t17",
+                    "t18",
+                    "t19",
+                    "t20") 
+  
+  colnames(a2) <- c("areaname",
+                    "mt",
+                    "m1",
+                    "m2",
+                    "m3",
+                    "m4",
+                    "m5",
+                    "m6",
+                    "m7",
+                    "m8",
+                    "m9",
+                    "m10",
+                    "m11",
+                    "m12",
+                    "m13",
+                    "m14",
+                    "m15",
+                    "m16",
+                    "m17",
+                    "m18",
+                    "m19",
+                    "m20") 
+  
+  colnames(a3) <- c("areaname",
+                    "ft",
+                    "f1",
+                    "f2",
+                    "f3",
+                    "f4",
+                    "f5",
+                    "f6",
+                    "f7",
+                    "f8",
+                    "f9",
+                    "f10",
+                    "f11",
+                    "f12",
+                    "f13",
+                    "f14",
+                    "f15",
+                    "f16",
+                    "f17",
+                    "f18",
+                    "f19",
+                    "f20") 
+  
+  #地域名が同じもので一行にまとめる
+  ans <- a1 %>% left_join(a2) %>% left_join(a3) %>% mutate(date = tmp_date)
+  
+  return(ans)
+}
+
+
+read_5sai_data <- function(datadir = "./"){
+  
+  files <- dir(datadir, full.names = TRUE)
+  
+  ans <- NULL
+
+  for (i in seq_along(files) ){
+    
+    # 各ファイル毎の処理  
+    tmp_data <- get_data_from_5sai_data(files[i])
+    ans <- rbind(ans, tmp_data)
+  }
+  
+  return(ans)
+
+}
+
+```
+
+
+年齢別人口データの作成
+
+
+# データの読み込み
+
+```{r}
+# new_data
+ndata <- read_new_data("data/new/")
+
+# census2020
+d2020 <- read_2020_data("data/2020/R2kokutyo_osakahu_kakuhou_syousai.xlsx")
+
+# old_data
+odata <- read_old_data("data/old/")
+
+# 5sai_data
+data5sai <- read_5sai_data("data/by_age/")
+
+ans <- ndata %>% rbind(d2020) %>% rbind(odata) %>% left_join(data5sai)
+
+```
+
+各種形式のエクセルファイルを読み込んでデータフレームにする
+
+# データをエクセルファイルに書き出す
+
+
+```{r}
+write_census_all_data_to_excelfile <- function(df, path="output/all_data.xlsx"){
+  
+  obj <- createWorkbook()
+  
+  # 定義した地域名を使う
+  cityNames <- cityID[[2]]
+  
+  for (i in seq_along(cityNames)){
+    cityName <- cityNames[i]
+    addWorksheet(obj, sheetName = cityName)
+    
+    # 合体したdata.frame 「ans」から該当地域をフィルタリング
+    tmp_data <- 
+      df %>% 
+      filter(areaname == cityName) %>% 
+      relocate(date) %>% 
+      arrange(date)
+    
+    writeData(obj,
+              sheet = cityName,
+              x = tmp_data)
+  }
+  
+  saveWorkbook(obj,
+               file = path,
+               overwrite = TRUE)
+}
+
+write_census_all_data_to_excelfile(ans)
+```
+
+
+# 必要なデータのみシンプルに扱う
+
+世帯数、人口、３区分
+
+
+```{r}
+mydata <- ans %>%
+  mutate(child = t1+t2+t3,
+         young = t4+t5+t6+t7+t8+t9+t10+t11+t12+t13,
+         old = t14+t15+t16+t17+t18+t19+t20) %>% 
+  select(areaname, date, hh, pt, child, young, old)
+mydata
+```
+
+## ファイルへの書き出し
+
+シンプルデータをファイルへ書き出し
+
+```{r}
+write_census_small_data_to_excelfile <- function(df, path="output/small_data.xlsx"){
+  
+  obj <- createWorkbook()
+  
+  # 定義した地域名を使う
+  cityNames <- cityID[[2]]
+  
+  for (i in seq_along(cityNames)){
+    cityName <- cityNames[i]
+    addWorksheet(obj, sheetName = cityName)
+    
+    # 合体したdata.frame 「ans」から該当地域をフィルタリング
+    tmp_data <- 
+      df %>% 
+      filter(areaname == cityName) %>% 
+      relocate(date) %>% 
+      arrange(desc(date)) %>% 
+      rename(`総世帯数` = hh,
+             `総人口` = pt,
+             `地域名` = areaname,
+             `年少人口` = child,
+             `生産年齢人口` = young,
+             `老年人口` = old,
+             `時点` = date)
+    
+    writeData(obj,
+              sheet = cityName,
+              x = tmp_data)
+  }
+  
+  saveWorkbook(obj,
+               file = path,
+               overwrite = TRUE)
+}
+options("openxlsx.dateFormat" = "yyyy/mm/dd")
+write_census_small_data_to_excelfile(mydata)
+```
+
