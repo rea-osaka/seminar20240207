@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 
-data/2020/*
-data/by_age/*
-data/new/*
-data/old/*
+data/2020/*.xlsx
+data/by_age/*.xlsx
+data/new/*.xlsx
+data/old/*.xlsx
