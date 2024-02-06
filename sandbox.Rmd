@@ -1,0 +1,13 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+for (i in seq_along(href_data)){
+  #message(basename(href_data[i]))
+  message(href_data[i])
+}
+
+```
+

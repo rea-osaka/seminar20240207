@@ -202,7 +202,7 @@ link_data <-
 target_dl_url <- "https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.xlsx"
 
 # ファイルをダウンロードする
-download.file(url = target_dl_url, destfile = basename(target_dl_url))
+download.file(url = target_dl_url, mode = "wb", destfile = basename(target_dl_url))
 ```
 
 

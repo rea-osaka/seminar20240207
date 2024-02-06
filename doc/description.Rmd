@@ -1,6 +1,6 @@
 ---
 title: "人口データ作成の自動化"
-author: "nekota"
+author: "fukuda"
 date: "2024-01-28"
 output: html_document
 ---

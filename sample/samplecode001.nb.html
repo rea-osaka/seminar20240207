@@ -1752,11 +1752,31 @@ display: none;
 
 
 <!-- rnb-text-begin -->
+<div id="api" class="section level1">
+<h1>API</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShqc29ubGl0ZSlcbmEgPC0gXG4gIGZyb21KU09OKFwiaHR0cHM6Ly93d3cubGFuZC5tbGl0LmdvLmpwL3dlYmxhbmQvYXBpL1RyYWRlTGlzdFNlYXJjaD9mcm9tPTIwMTUxJnRvPTIwMTUyJmFyZWE9MTBcIilcbmFcbmBgYCJ9 -->
+<pre class="r"><code>library(jsonlite)
+a &lt;- 
+  fromJSON(&quot;https://www.land.mlit.go.jp/webland/api/TradeListSearch?from=20151&amp;to=20152&amp;area=10&quot;)
+a</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudG9KU09OKGEpXG5gYGAifQ== -->
+<pre class="r"><code>toJSON(a)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
 <div id="スクレイピング" class="section level1">
 <h1>スクレイピング</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShydmVzdClcbmxpYnJhcnkodGlkeXZlcnNlKVxuXG4jIOS6uuWPo+ODh+ODvOOCv+OCkuWFrOmWi+OBl+OBpuOBhOOCi+Wkp+mYquW6nOOBrlVSTFxudGFyZ2V0X3VybCA8LSBcImh0dHBzOi8vd3d3LnByZWYub3Nha2EubGcuanAvdG91a2VpL2ppbmtvdS9qaW5rb3UteGxzbGlzdC5odG1sXCJcblxuIyDjg5rjg7zjgrjjgpLlj5blvpdcbm5vZGVfZGF0YSA8LSByZWFkX2h0bWwodGFyZ2V0X3VybCwgZW5jb2RpbmcgPSBcInNoaWZ0X2ppc1wiKVxuXG4jIOani+mAoOOBp+mBuOWIpVxuaHJlZl9kYXRhIDwtIFxuICAgIG5vZGVfZGF0YSAlPiUgXG4gICAgaHRtbF9ub2RlcyhcInRib2R5IHRkIGFcIikgJT4lIFxuICAgIGh0bWxfYXR0cihcImhyZWZcIilcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShydmVzdClcbmxpYnJhcnkodGlkeXZlcnNlKVxuXG4jIOS6uuWPo+ODh+ODvOOCv+OCkuWFrOmWi+OBl+OBpuOBhOOCi+Wkp+mYquW6nOOBrlVSTFxudGFyZ2V0X3VybCA8LSBcImh0dHBzOi8vd3d3LnByZWYub3Nha2EubGcuanAvdG91a2VpL2ppbmtvdS9qaW5rb3UteGxzbGlzdC5odG1sXCJcblxuIyDjg5rjg7zjgrjjgpLlj5blvpdcbm5vZGVfZGF0YSA8LSByZWFkX2h0bWwodGFyZ2V0X3VybCwgZW5jb2RpbmcgPSBcInNoaWZ0X2ppc1wiKVxuXG4jIOani+mAoOOBp+mBuOWIpVxuaHJlZl9kYXRhIDwtIFxuICAgIG5vZGVfZGF0YSAlPiUgXG4gICAgaHRtbF9ub2RlcyhcInRib2R5IHRkIGFcIikgJT4lIFxuICAgIGh0bWxfYXR0cihcImhyZWZcIilcblxuYGBgIn0= -->
 <pre class="r"><code>library(rvest)
 library(tidyverse)
 
@@ -1770,7 +1790,8 @@ node_data &lt;- read_html(target_url, encoding = &quot;shift_jis&quot;)
 href_data &lt;- 
     node_data %&gt;% 
     html_nodes(&quot;tbody td a&quot;) %&gt;% 
-    html_attr(&quot;href&quot;)</code></pre>
+    html_attr(&quot;href&quot;)
+</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1779,9 +1800,9 @@ href_data &lt;-
 <h1>正規表現</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzdHJpbmdyKVxuaHJlZl9kYXRhICU+JSBzdHJfc3Vic2V0KFwiLnhsc3hcIikgJT4lIHN0cl9zdWJzZXQoXCI1c2FpXCIsbmVnYXRlID0gVFJVRSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShzdHJpbmdyKVxuaHJlZl9kYXRhICU+JSBzdHJfc3Vic2V0KFwiXFxcXC54bHN4JFwiKSAlPiUgc3RyX3N1YnNldChcIjVzYWlcIixuZWdhdGUgPSBUUlVFKVxuYGBgIn0= -->
 <pre class="r"><code>library(stringr)
-href_data %&gt;% str_subset(&quot;.xlsx&quot;) %&gt;% str_subset(&quot;5sai&quot;,negate = TRUE)</code></pre>
+href_data %&gt;% str_subset(&quot;\\.xlsx$&quot;) %&gt;% str_subset(&quot;5sai&quot;,negate = TRUE)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1790,12 +1811,12 @@ href_data %&gt;% str_subset(&quot;.xlsx&quot;) %&gt;% str_subset(&quot;5sai&quot
 <h1>ダウンロード</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyDjg4Djgqbjg7Pjg63jg7zjg4njgZfjgZ/jgYTjg5XjgqHjgqTjg6vjga5VUkxcbnRhcmdldF9kbF91cmwgPC0gXCJodHRwczovL3d3dy5wcmVmLm9zYWthLmxnLmpwL2F0dGFjaC8zMzg3LzAwMDE0NjkwL2prMjAyNDAxMDEueGxzeFwiXG5cbiMg44OV44Kh44Kk44Or44KS44OA44Km44Oz44Ot44O844OJ44GZ44KLXG5kb3dubG9hZC5maWxlKHVybCA9IHRhcmdldF9kbF91cmwsIGRlc3RmaWxlID0gYmFzZW5hbWUodGFyZ2V0X2RsX3VybCkpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyDjg4Djgqbjg7Pjg63jg7zjg4njgZfjgZ/jgYTjg5XjgqHjgqTjg6vjga5VUkxcbnRhcmdldF9kbF91cmwgPC0gXCJodHRwczovL3d3dy5wcmVmLm9zYWthLmxnLmpwL2F0dGFjaC8zMzg3LzAwMDE0NjkwL2prMjAyNDAxMDEueGxzeFwiXG5cbiMg44OV44Kh44Kk44Or44KS44OA44Km44Oz44Ot44O844OJ44GZ44KLXG5kb3dubG9hZC5maWxlKHVybCA9IHRhcmdldF9kbF91cmwsIG1vZGUgPSBcIndiXCIsIGRlc3RmaWxlID0gYmFzZW5hbWUodGFyZ2V0X2RsX3VybCkpXG5gYGAifQ== -->
 <pre class="r"><code># ダウンロードしたいファイルのURL
 target_dl_url &lt;- &quot;https://www.pref.osaka.lg.jp/attach/3387/00014690/jk20240101.xlsx&quot;
 
 # ファイルをダウンロードする
-download.file(url = target_dl_url, destfile = basename(target_dl_url))</code></pre>
+download.file(url = target_dl_url, mode = &quot;wb&quot;, destfile = basename(target_dl_url))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1814,7 +1835,7 @@ df</code></pre>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2FtcGxlIENvZGUgMDAxIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIOOCueOCr+ODrOOCpOODlOODs+OCsAoKYGBge3J9CmxpYnJhcnkocnZlc3QpCmxpYnJhcnkodGlkeXZlcnNlKQoKIyDkurrlj6Pjg4fjg7zjgr/jgpLlhazplovjgZfjgabjgYTjgovlpKfpmKrlupzjga5VUkwKdGFyZ2V0X3VybCA8LSAiaHR0cHM6Ly93d3cucHJlZi5vc2FrYS5sZy5qcC90b3VrZWkvamlua291L2ppbmtvdS14bHNsaXN0Lmh0bWwiCgojIOODmuODvOOCuOOCkuWPluW+lwpub2RlX2RhdGEgPC0gcmVhZF9odG1sKHRhcmdldF91cmwsIGVuY29kaW5nID0gInNoaWZ0X2ppcyIpCgojIOani+mAoOOBp+mBuOWIpQpocmVmX2RhdGEgPC0gCiAgICBub2RlX2RhdGEgJT4lIAogICAgaHRtbF9ub2RlcygidGJvZHkgdGQgYSIpICU+JSAKICAgIGh0bWxfYXR0cigiaHJlZiIpCmBgYAoKCgoKIyDmraPopo/ooajnj74KCmBgYHtyfQpsaWJyYXJ5KHN0cmluZ3IpCmhyZWZfZGF0YSAlPiUgc3RyX3N1YnNldCgiLnhsc3giKSAlPiUgc3RyX3N1YnNldCgiNXNhaSIsbmVnYXRlID0gVFJVRSkKYGBgCgoKIyDjg4Djgqbjg7Pjg63jg7zjg4kKCmBgYHtyfQojIOODgOOCpuODs+ODreODvOODieOBl+OBn+OBhOODleOCoeOCpOODq+OBrlVSTAp0YXJnZXRfZGxfdXJsIDwtICJodHRwczovL3d3dy5wcmVmLm9zYWthLmxnLmpwL2F0dGFjaC8zMzg3LzAwMDE0NjkwL2prMjAyNDAxMDEueGxzeCIKCiMg44OV44Kh44Kk44Or44KS44OA44Km44Oz44Ot44O844OJ44GZ44KLCmRvd25sb2FkLmZpbGUodXJsID0gdGFyZ2V0X2RsX3VybCwgZGVzdGZpbGUgPSBiYXNlbmFtZSh0YXJnZXRfZGxfdXJsKSkKYGBgCgoKIyDoqq3jgb/ovrzjgb8KCmBgYHtyfQpsaWJyYXJ5KG9wZW54bHN4KQpkZiA8LSByZWFkLnhsc3goIi4uL2RhdGEvbmV3L2prMjAyMTEyMDEueGxzeCIpCmRmCmBgYAoKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiU2FtcGxlIENvZGUgMDAxIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIEFQSQoKYGBge3J9CmxpYnJhcnkoanNvbmxpdGUpCmEgPC0gCiAgZnJvbUpTT04oImh0dHBzOi8vd3d3LmxhbmQubWxpdC5nby5qcC93ZWJsYW5kL2FwaS9UcmFkZUxpc3RTZWFyY2g/ZnJvbT0yMDE1MSZ0bz0yMDE1MiZhcmVhPTEwIikKYQpgYGAKCgpgYGB7cn0KdG9KU09OKGEpCmBgYAoKCgojIOOCueOCr+ODrOOCpOODlOODs+OCsAoKYGBge3J9CmxpYnJhcnkocnZlc3QpCmxpYnJhcnkodGlkeXZlcnNlKQoKIyDkurrlj6Pjg4fjg7zjgr/jgpLlhazplovjgZfjgabjgYTjgovlpKfpmKrlupzjga5VUkwKdGFyZ2V0X3VybCA8LSAiaHR0cHM6Ly93d3cucHJlZi5vc2FrYS5sZy5qcC90b3VrZWkvamlua291L2ppbmtvdS14bHNsaXN0Lmh0bWwiCgojIOODmuODvOOCuOOCkuWPluW+lwpub2RlX2RhdGEgPC0gcmVhZF9odG1sKHRhcmdldF91cmwsIGVuY29kaW5nID0gInNoaWZ0X2ppcyIpCgojIOani+mAoOOBp+mBuOWIpQpocmVmX2RhdGEgPC0gCiAgICBub2RlX2RhdGEgJT4lIAogICAgaHRtbF9ub2RlcygidGJvZHkgdGQgYSIpICU+JSAKICAgIGh0bWxfYXR0cigiaHJlZiIpCgpgYGAKCgoKIyDmraPopo/ooajnj74KCmBgYHtyfQpsaWJyYXJ5KHN0cmluZ3IpCmhyZWZfZGF0YSAlPiUgc3RyX3N1YnNldCgiXFwueGxzeCQiKSAlPiUgc3RyX3N1YnNldCgiNXNhaSIsbmVnYXRlID0gVFJVRSkKYGBgCgoKIyDjg4Djgqbjg7Pjg63jg7zjg4kKCmBgYHtyfQojIOODgOOCpuODs+ODreODvOODieOBl+OBn+OBhOODleOCoeOCpOODq+OBrlVSTAp0YXJnZXRfZGxfdXJsIDwtICJodHRwczovL3d3dy5wcmVmLm9zYWthLmxnLmpwL2F0dGFjaC8zMzg3LzAwMDE0NjkwL2prMjAyNDAxMDEueGxzeCIKCiMg44OV44Kh44Kk44Or44KS44OA44Km44Oz44Ot44O844OJ44GZ44KLCmRvd25sb2FkLmZpbGUodXJsID0gdGFyZ2V0X2RsX3VybCwgbW9kZSA9ICJ3YiIsIGRlc3RmaWxlID0gYmFzZW5hbWUodGFyZ2V0X2RsX3VybCkpCmBgYAoKCiMg6Kqt44G/6L6844G/CgpgYGB7cn0KbGlicmFyeShvcGVueGxzeCkKZGYgPC0gcmVhZC54bHN4KCIuLi9kYXRhL25ldy9qazIwMjExMjAxLnhsc3giKQpkZgpgYGAKCgoK</div>
 
 
 
