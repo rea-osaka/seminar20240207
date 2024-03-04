@@ -1,5 +1,5 @@
 ---
-title: "人口データをダウンロードするコード"
+title: "人口データをダウンロードするコード20240226"
 output: html_notebook
 ---
 
@@ -526,23 +526,47 @@ read_new_data <- function(datadir = "./"){
     tmp_date <- get_date_from_new_data(files[i])
     tmp_data <- get_data_from_new_data(files[i])
     
+#    if (tmp_date <= lubridate::as_date("20210901")){
+#      # 2021年09月1日以前は１年間の増減データが無い
+#      tmp_data <- 
+#        tmp_data %>% 
+#        mutate(X11 = X6,
+#               X12 = X7,
+#               X13 = X8,
+#               X14 = X9,
+#               X15 = X10,
+#               X16 = X11,
+#               X17 = X12) %>%
+#        mutate(X6 = NA,
+#               X7 = NA,
+#               X8 = NA,
+#               X9 = NA,
+#               X10 = NA,
+#               date = tmp_date)
+#    }else{
+#      tmp_data <- 
+#        tmp_data %>% 
+#        mutate(date = tmp_date)
+#    }
+
     if (tmp_date <= lubridate::as_date("20210901")){
       # 2021年09月1日以前は１年間の増減データが無い
       tmp_data <- 
         tmp_data %>% 
-        mutate(X11 = X6,
+        mutate(X16 = X11,
+               X17 = X12,
+               X11 = X6,
                X12 = X7,
                X13 = X8,
                X14 = X9,
-               X15 = X10,
-               X16 = X11,
-               X17 = X12) %>%
+               X15 = X10) %>%
         mutate(X6 = NA,
                X7 = NA,
                X8 = NA,
                X9 = NA,
                X10 = NA,
-               date = tmp_date)
+               date = tmp_date) %>% 
+        select(c(X1:X12,X13,X14,X15,X16,X17,date))
     }else{
       tmp_data <- 
         tmp_data %>% 
@@ -755,6 +779,10 @@ get_data_from_5sai_data <- function(file) {
   tmp_date_data <- openxlsx::read.xlsx(file, colNames = FALSE)
   tmp_date <- tmp_date_data[2,1] %>% make_date_from_string()
 
+  if (is.na(tmp_date)){
+    tmp_date <- convertToDate(as.numeric(tmp_date_data[2,1]))
+  }
+  
   # 2列目がNA（人口データのない)行を削除
   a <- a[!is.na(a[,2]),]
   
